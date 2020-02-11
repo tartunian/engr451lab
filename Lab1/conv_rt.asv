@@ -1,0 +1,9 @@
+% Real-time convolution
+function y = conv_rt(x,h)
+    Lx = length(x);
+    Lh = length(h);
+    y = zeros(1, Lx+Ly-1);
+    for i = 1:Lx-1
+        for j = 1:Lh
+            y(i)
+end

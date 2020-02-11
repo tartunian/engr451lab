@@ -12,21 +12,6 @@ classdef sequence
             a = [zeros(1,x.offset-y.offset), x.data, zeros(1,Ly-Lx)];
             b = [zeros(1,y.offset-x.offset), y.data, zeros(1,Lx-Ly)];
         end
-        
-        % For x*y, # of multiplications = Lx . Ly
-        % For x*y, # of additions = (Lx-1) . xLy
-        function a = convolve_xy(x,y)
-            x
-            y
-            Lx = length(x.data);
-            Y=[];
-            for n = 0:(Lx-3)
-                n=n+1;Y=[Y;zeros(1,n-1),y.data(1:end-n+1),zeros(1,0)];Y
-                n
-            end
-            Y
-            a = sequence(x.data*Y,x.offset+y.offset);
-        end
 
 %         % My Original Implementation
 %         % 
@@ -143,6 +128,37 @@ classdef sequence
                 z = sequence(a.*b,min(x.offset,y.offset));
             end
             %trim(z);
+        end
+        
+        function y = conv(x,h)
+            lx = length(x.data);
+            lh = length(h.data);
+            if(lx>lh)
+                y = convol(h,x,lh,lx);
+            else
+                y = convol(x,h,lx,lh);
+            end
+        end
+        
+        % Convolution
+        function y = convol( x,h,lx,lh )
+            widthH = lx + lh - 1;
+            H=zeros( lx, widthH );
+            for n = 1:lx
+                zerosLeftLength     = n-1;
+                dataStart           = 1;
+                dataEnd             = min( lh, widthH - zerosLeftLength );
+                zerosRightLength    = widthH - dataEnd - dataStart - zerosLeftLength + 1;
+                left                = zeros( 1, zerosLeftLength );
+                data                = h.data( dataStart : dataEnd );
+                right               = zeros( 1, zerosRightLength );
+                H(n,:)              = [left, data, right];
+            end
+            y = sequence(x.data*H,x.offset+h.offset);
+        end
+        
+        function y = deconv(x,h)
+            y = conv(x,h);
         end
         
         function x = trim(x)
