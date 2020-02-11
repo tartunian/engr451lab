@@ -20,9 +20,9 @@ classdef sequence
             y
             Lx = length(x.data);
             Y=[];
-            for n = 0:(Lx-3)
+            for n = 0:Lx-1
                 n=n+1;Y=[Y;zeros(1,n-1),y.data(1:end-n+1),zeros(1,0)];Y
-                n
+                
             end
             Y
             a = sequence(x.data*Y,x.offset+y.offset);
