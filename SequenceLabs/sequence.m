@@ -150,11 +150,11 @@ classdef sequence
                 dataEnd             = min( lh, widthH - zerosLeftLength );
                 zerosRightLength    = widthH - dataEnd - dataStart - zerosLeftLength + 1;
                 left                = zeros( 1, zerosLeftLength );
-                data                = h.data( dataStart : dataEnd );
+                mid                 = h.data( dataStart : dataEnd );
                 right               = zeros( 1, zerosRightLength );
-                H(n,:)              = [left, data, right];
+                H(n,:)              = [left, mid, right];
             end
-            y = sequence(x.data*H,x.offset+h.offset);
+            y = sequence( x.data*H, x.offset+h.offset );
         end
         
         function y = deconv(x,h)
