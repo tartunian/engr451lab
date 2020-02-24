@@ -140,8 +140,7 @@ classdef sequence
             end
         end
         
-        % Convolution
-        function y = convol( x,h,lx,lh )
+        function H = getConvMatrix(h,lx,lh)
             widthH = lx + lh - 1;
             H=zeros( lx, widthH );
             for n = 1:lx
@@ -154,11 +153,27 @@ classdef sequence
                 right               = zeros( 1, zerosRightLength );
                 H(n,:)              = [left, mid, right];
             end
+        end
+        
+        % Convolution
+        function y = convol( x,h,lx,lh )
+            H = getConvMatrix(h,lx,lh);
             y = sequence( x.data*H, x.offset+h.offset );
         end
         
-        function y = deconv(x,h)
-            y = conv(x,h);
+        function x = deconv(y,h)
+            ly = length(y.data);
+            lh = length(h.data);
+            lx = ly-lh+1;
+            x_data = zeros(1,lx);
+            for n=1:lx
+                sub = 0;
+                for k=1:(min(n,lh))
+                    sub = sub + x_data(n-k+1)*h.data(k);
+                end
+                x_data(n)=(y.data(n)-sub)/h.data(1);
+            end
+            x=sequence(x_data,y.offset-h.offset);
         end
         
         function x = trim(x)
