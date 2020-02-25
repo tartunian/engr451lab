@@ -161,7 +161,7 @@ classdef sequence
             y = sequence( x.data*H, x.offset+h.offset );
         end
         
-        function x = deconv2(y,h)
+        function x = deconv(y,h)
             ly = length(y.data);
             lh = length(h.data);
             lx = ly-lh+1;
