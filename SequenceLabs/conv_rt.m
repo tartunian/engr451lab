@@ -1,4 +1,5 @@
 % Real-time convolution
+% Code from Haji
 function y = conv_rt(x,h)
     Lx = length(x);
     Lh = length(h);

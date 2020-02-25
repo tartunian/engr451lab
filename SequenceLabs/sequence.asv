@@ -162,31 +162,27 @@ classdef sequence
         end
         
         function x = deconv2(y,h)
+            lh = length(h.data);
+            lx = ly-lh+1;
+            H_hat = pinv(getConvMatrix(h,lx,lh);
+            x = sequence(y.data*H,y.offset-h.offset);
+        end
+        
+        function x = deconv(y,h)
             ly = length(y.data);
             lh = length(h.data);
             lx = ly-lh+1;
-            H_hat = pinv(getConvMatrix(h,lx,lh));
-            x = sequence(round(y.data*H_hat),y.offset-h.offset);
+            x_data = zeros(1,lx);
+            for n=1:lx
+                sub = 0;
+                for k=1:(min(n,lh))
+                    sub = sub + x_data(n-k+1)*h.data(k);
+                end
+                x_data(n)=(y.data(n)-sub)/h.data(1);
+            end
+            x=sequence(x_data,y.offset-h.offset);
         end
         
-        
-%           Original Implementation
-% 
-%           function x = deconv(y,h)
-%             ly = length(y.data);
-%             lh = length(h.data);
-%             lx = ly-lh+1;
-%             x_data = zeros(1,lx);
-%             for n=1:lx
-%                 sub = 0;
-%                 for k=1:(min(n,lh))
-%                     sub = sub + x_data(n-k+1)*h.data(k);
-%                 end
-%                 x_data(n)=(y.data(n)-sub)/h.data(1);
-%             end
-%             x=sequence(x_data,y.offset-h.offset);
-%         end
-
         function x = trim(x)
             while(x.data(1) == 0 && length(x.data)>1)
                 x.data(1) = [];
