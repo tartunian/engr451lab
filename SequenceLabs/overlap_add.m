@@ -11,7 +11,7 @@ function y = overlap_add(x,h,lc)
         tempoffset = lc * (i-1);
         data = conv(temp,h);
         ts = sequence(data,tempoffset);
-        ys=plus(ys,ts);
+        ys = plus(ys,ts);
     end
     y = ys.data;
 end
