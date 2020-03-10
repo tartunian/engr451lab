@@ -14,5 +14,6 @@ function y = overlap_add(x,h,lc)
         ys = plus(ys,ts);
     end
     y = ys.data;
+    y=ys.data(find(y,1,'first'):find(y,1,'last'));
 end
 
