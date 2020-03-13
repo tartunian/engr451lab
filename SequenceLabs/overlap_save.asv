@@ -16,19 +16,20 @@ function y = overlap_save(x,h,ls)
     startSampleIndex = c*ls+1;
     endSampleIndex = startSampleIndex+ls-1;
     
+    x
+    h
+    conv(x,h)
+    result=[];
     % While end of current xSample is <= length of padded x.
     while( endSampleIndex <= lx )
         prevXChunkTail = xChunkPrev(end-lh+2:end);
         xSample = x(startSampleIndex:endSampleIndex);
         
         xChunk = [prevXChunkTail xSample];
-        yChunk = conv(xChunk,h);
-        newYData = yChunk(lh:end);
-        startYIndex = c*ls+1;
-        endYIndex = min(yLength,startYIndex+length(newYData)-1);
-        
-        y(startYIndex:endYIndex) = yChunk(lh:lh+endYIndex-startYIndex);
-        
+        yChunk = conv(xChunk,h)
+        newYData = yChunk(lh:end)
+        startYIndex = c
+        %y=[y newYData];
         xChunkPrev = xChunk;
         yChunkPrev = yChunk;
         
@@ -36,6 +37,8 @@ function y = overlap_save(x,h,ls)
         startSampleIndex = c*ls+1;
         endSampleIndex = startSampleIndex+ls-1;
     end
+    
+    %y=y(find(y,1,'first'):find(y,1,'last'));
     
 end
 
