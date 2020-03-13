@@ -1,4 +1,4 @@
-function y = overlap_save2(x,h,lc)
+function y = overlap_save(x,h,lc)
 
     % Length of x
     lx = length(x);
