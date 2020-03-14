@@ -131,11 +131,13 @@ classdef sequence
         end
         
         function y = even(x)
-            y=times(0.5,x+x.flip());
+            data = 0.5*(x.data+conj(x.flip().data));
+            y = sequence(data,x.offset);
         end
         
         function y = odd(x)
-            y=times(0.5,x-x.flip());
+            data = 0.5*(x.data-conj(x.flip().data));
+            y = sequence(data,x.offset);
         end
         
         function y = conj(x)
@@ -181,22 +183,23 @@ classdef sequence
             x = sequence(round(y.data*H_hat),y.offset-h.offset);
         end
         
-%         function y = even2(x)
-%             lx=length(x.data);
-%             data=zeros(1,lx);
-%             for n=x.offset:x.offset+lx-1
-%                 i=n-x.offset+1                 % Index of x[n]
-%                 minus_i=-n-x.offset+1          % Index of x[-n]
-%                 x_i=x.data(i);                  % Value of x[n]
-%                 x_minus_i=0;                    % Default value of x[-n]
-%                  
-%                 if(0<minus_i && minus_i<=lx)
-%                     x_minus_i=x.data(minus_i);
-%                 end
-%                 data(i)=(x_i+x_minus_i)/2;
-%             end
-%             y=sequence(data,x.offset);
-%         end
+        function y = even2(x)
+            lx=length(x.data);
+            data=zeros(1,lx);
+            for n=x.offset:x.offset+lx
+                i=n-x.offset+1;                 % Index of x[n]
+                minus_i=-n-x.offset+1;          % Index of x[-n]
+                x_i=x.data(i);                  % Value of x[n]
+                x_minus_i=0;                    % Default value of x[-n]
+                 
+                if(0<minus_i && min<=lx)
+                    minus_i
+                    x_minus_i=x.data(minus_i);
+                end
+                data(i)=(x_i+x_minus_i)/2;
+            end
+            y=sequence(data,x.offset);
+        end
 %         
 %         function y = odd(x)
 %             lx = length(x.data);
