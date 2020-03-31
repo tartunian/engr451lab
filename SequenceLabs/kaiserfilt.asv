@@ -1,0 +1,10 @@
+function h = kaiserfilt(N, wc, beta)
+    n=-(N-1)/2:(N-1)/2;
+    inner=beta*(1
+    w=besseli(0,inner)./besseli(0,beta);
+    h_ideal=wc*sinc(wc.*n);
+    h=w.*h_ideal;
+    h=h/sum(h);
+end
+
+% wvtool(h) time domain vs freq domain
