@@ -1,0 +1,87 @@
+function str = dtmfdecode(s,fs)
+    s=[s; zeros(1-mod(length(s),2))];
+    fT = 25;
+    keyMap = containers.Map();
+    keyMap('1') = [697 1209];
+    keyMap('2') = [697 1339];
+    keyMap('3') = [697 1477];
+    keyMap('4') = [770 1209];
+    keyMap('5') = [770 1339];
+    keyMap('6') = [770 1477];
+    keyMap('7') = [852 1209];
+    keyMap('8') = [852 1339];
+    keyMap('9') = [852 1477];
+    keyMap('*') = [941 1209];
+    keyMap('0') = [941 1339];
+    keyMap('#') = [941 1477];
+    
+    keyMapWithTolerance = spalloc(4,3,1);
+    keyMapWithTolerance(1:1200,1:1600) = '?';
+    keySet = keys(keyMap);
+    nKeys = length(keySet);
+    
+    for k=1:nKeys
+        key = char(keySet(k));
+        freqs = keyMap(key);
+        rf = freqs(1);
+        cf = freqs(2);
+        keyMapWithTolerance(-fT+rf:rf+fT,-fT+cf:cf+fT) = key;
+    end
+    
+    str = ' ';
+    
+    [sr,sc] = separate(s,fs);
+    Fn = fs/2;                          % Nyquist frequency
+    Df = 0.010;                         % Frame duration: sec
+    Ls = length(sr);                    % Separated signal length
+    Lf = Df * fs + 1;                   % Samples per frame: samples/sec,
+                                        % odd so that it is symmetric 
+                                        % across y-axis/origin.
+    pad = Lf-mod(Ls,Lf);
+    sr = [sr; zeros(pad,1)];
+    sc = [sc; zeros(pad,1)];
+    Ls_hat = length(sr);                % Length of sr (and sc) after padding
+    nframes = Ls_hat/Lf;
+    framePad = fix((Ls_hat - Lf)/2);
+    
+    for(i=1:nframes)
+        frameStartIndex = (i-1)*Lf+1;
+        frameEndIndex = i*Lf;
+        sr_frame = [zeros(framePad,1); sr(frameStartIndex:frameEndIndex); zeros(framePad,1)];
+        sc_frame = [zeros(framePad,1); sc(frameStartIndex:frameEndIndex); zeros(framePad,1)];
+        L_framePadded = length(sr_frame);
+        
+        ft_sr = abs(fftshift(fft(sr_frame)));
+        ft_sc = abs(fftshift(fft(sc_frame)));
+        [mr,jr] = max(ft_sr);
+        [mc,jc] = max(ft_sc);
+        
+        Fv = Fn*linspace(-1,1,L_framePadded);           % Frequency vector
+        Iv = 1:L_framePadded;                           % Index vector
+        Tv = Iv + (i-1)*L_framePadded;                  % Time vector
+        
+        rf = abs(Fv(jr));
+        cf = abs(Fv(jc));
+        
+        if(0<rf&&rf<=1000&&1200<cf&&cf<=1500)
+            arf = floor(rf);
+            acf = floor(cf);
+            k = char(full(keyMapWithTolerance(arf,acf)));
+            string(k ' ' string(arf) ' ' string(acf)]
+            if(k~='?'&&str(end)~=k)
+                str = [str k];
+            end
+        end
+
+%         plot3(Fv,Tv,ft_sr(Iv));
+%         hold on;
+%         plot3(Fv,Tv,ft_sc(Iv));
+%         hold on;
+%         xlabel('Frequency (Hz)');
+%         ylabel('time');
+%         zlabel('Magnitude');
+%         pause(Df);
+    end
+    
+    str=str(2:end);
+end
